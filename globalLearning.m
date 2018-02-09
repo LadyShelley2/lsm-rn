@@ -11,7 +11,7 @@ for t=2:T-1
     numer = (squeeze(Ys(t,:,:)).*squeeze(Gs(t,:,:)))*(squeeze(Us(t,:,:))*B'+squeeze(Us(t,:,:))*B)+lambda*W*squeeze(Us(t,:,:))+lambda*W*squeeze(Us(t,:,:));
     denom = (squeeze(Ys(t,:,:)).* (squeeze(Us(t,:,:))*B*squeeze(Us(t,:,:))'))*(squeeze(Us(t,:,:))*B'+squeeze(Us(t,:,:))*B)+lambda*D*squeeze(Us(t,:,:))+gamma*(squeeze(Us(t,:,:))+squeeze(Us(t,:,:))*A*A');
 %     size( squeeze(Us(t,:,:)).*((numer./denom).^(1.0/4)))
-    NewUs(t,:,:) = squeeze(Us(t,:,:)).*((numer./denom).^(1.0/2)); 
+    NewUs(t,:,:) = squeeze(Us(t,:,:)).*((numer./denom).^(1.0/4)); 
     NewUs(t,find(denom==0))=0;
 end
 

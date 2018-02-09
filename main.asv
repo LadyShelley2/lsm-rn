@@ -1,13 +1,13 @@
 clc;clear;close all;
 
 %% 
-startFileNum = 201610010810;
-endFileNum = 201610010920;
+startFileNum = 201610011510;
+endFileNum = 201610011620;
 interval = 5;
 
 trainingGs = [];
 testingGs = [];
-splitFlag = 5; % 分割训练数据和测试数据
+splitFlag = 8; % 分割训练数据和测试数据
 trainingSampleCounts = splitFlag;
 
 %% read data
@@ -110,23 +110,20 @@ completion_err = err/((trainingSampleCounts-2)*sum(sum(D)))
 
 %% prediction 
 prediction = squeeze(trainingUs(splitFlag-1,:,:))*A*A*B*(squeeze(trainingUs(splitFlag-1,:,:))*A*A)';
-average = squeeze(mean(trainingGs));
 
 speed_prediction =[];
 speed_base =[];
-speed_average=[];
+sp
 for j=2:n
     speed_prediction = [speed_prediction prediction(j,j-1)];
     speed_base = [speed_base testingGs(1,j,j-1)];
-    speed_average=[speed_average average(j,j-1)];
 end
 
 plot(speed_completion)
 hold on;
-plot(speed_base,'g');
-hold on;
-plot(speed_average,'r')
-legend('预测值','实际值','平均值');
+
+plot(speed_base);
+legend('预测值','实际值');
 figure;
 
 tmp = abs(squeeze(testingGs(1,:,:))-prediction)./squeeze(testingGs(1,:,:));
@@ -134,8 +131,13 @@ tmp(find(squeeze(testingGs(1,:,:))==0))=0;
 
 prediction_err = sum(sum(tmp))/(sum(sum(D)))
 
+%% 平均值
 
-tmp = abs(squeeze(testingGs(1,:,:))-average)./squeeze(testingGs(1,:,:));
+speed_average = squeeze(mean(trainingGs));
+plot(speed_average);
+title('平均')
+
+tmp = abs(squeeze(testingGs(1,:,:))-speed_average)./squeeze(testingGs(1,:,:));
 tmp(find(squeeze(testingGs(1,:,:))==0))=0;
 
 average_err = sum(sum(tmp))/(sum(sum(D)))
