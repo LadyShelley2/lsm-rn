@@ -7,7 +7,7 @@ interval = 5;
 
 trainingGs = [];
 testingGs = [];
-splitFlag = 5; % 分割训练数据和测试数据
+splitFlag = 10; % 分割训练数据和测试数据
 trainingSampleCounts = splitFlag;
 
 %% read data
@@ -32,10 +32,10 @@ T=size(1);
 n=size(2);
 testingSampleCounts = T-trainingSampleCounts;
 k=30;
-iter =2000;
+iter =200;
 threshold = 10;
-lambda = 2;
-gamma = 2;
+lambda = 1;
+gamma = 1;
 threshold = 0.01;
 
 %% prepare W, D, L ,Ys, Us, B, A
@@ -109,7 +109,7 @@ end
 completion_err = err/((trainingSampleCounts-2)*sum(sum(D)))
 
 %% prediction 
-prediction = squeeze(trainingUs(splitFlag-1,:,:))*A*A*B*(squeeze(trainingUs(splitFlag-1,:,:))*A*A)';
+prediction = squeeze(trainingUs(splitFlag-1,:,:))*A*B*(squeeze(trainingUs(splitFlag-1,:,:))*A)';
 average = squeeze(mean(trainingGs));
 
 speed_prediction =[];
@@ -127,7 +127,6 @@ plot(speed_base,'g');
 hold on;
 plot(speed_average,'r')
 legend('预测值','实际值','平均值');
-figure;
 
 tmp = abs(squeeze(testingGs(1,:,:))-prediction)./squeeze(testingGs(1,:,:));
 tmp(find(squeeze(testingGs(1,:,:))==0))=0;
