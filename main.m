@@ -1,155 +1,48 @@
 clc;clear;close all;
-
+%%
+% 本程序先考虑一天的数据，如果考虑多天，读入文件部分需要再修改
 %% 
-startFileNum = 201610010810;
-endFileNum = 201610010920;
+startFileNum = 201610010610;
+endFileNum = 201610010835;
 interval = 5;
+trainingCount = 25;
+testingCount = 1;
 
 trainingGs = [];
 testingGs = [];
-splitFlag = 10; % 分割训练数据和测试数据
-trainingSampleCounts = splitFlag;
+% splitFlag = 5; % 分割训练数据和测试数据
+% trainingSampleCounts = splitFlag;
 
-%% read data
-i=startFileNum;
-counter=1;
-while(i<=endFileNum)
-    snapshots(counter,:,:)=load(['.\data\' num2str(i) 'out.txt']);
-    if(rem(i,100)==55)
-        i = i + 40; % 遇到小时+1；
-    end
-    counter=counter+1;
-    i=i+interval;
-end
-
-trainingGs = snapshots(1:splitFlag,:,:);
-testingGs = snapshots(splitFlag+1:end,:,:);
-
-%% params
-
-size= size(snapshots);
-T=size(1);
-n=size(2);
-testingSampleCounts = T-trainingSampleCounts;
-k=30;
-iter =200;
-threshold = 10;
-lambda = 1;
-gamma = 1;
-threshold = 0.01;
-
-%% prepare W, D, L ,Ys, Us, B, A
-
-W=zeros(n,n);
-for i=2:n
-    W(i-1,i)=1;
-end
-
-D=zeros(n,n);
-for i=1:n
-    D(i,i)=sum(W(:,i));
-end
-
-L=D-W;
-
-for i=1:trainingSampleCounts
-    trainingYs(i,:,:)=zeros(n,n);
-    trainingYs(i,find(trainingGs(i,:,:)>0))=1;
-end
-
-B = rand(k,k);
-A = rand(k,k);
-for i=1:trainingSampleCounts
-    trainingUs(i,:,:) = rand(n,k);
-end
-%% training
-preGoalValue = 1e10;
-values=[];
-for i=1:iter 
-    goalvalue = goalValue(trainingYs,trainingGs,trainingUs,B,L,A,lambda,gamma)
-    values = [values goalvalue];
-%     if(abs(goalvalue-preGoalValue)<threshold) 
-%         break;
-%     end
-    preGoalValue=goalvalue;
-    [trainingUs,B,A]=globalLearning(trainingYs,trainingGs,trainingUs,B,W,D,A,lambda,gamma);
-end
-
-plot(values);
-figure;
-
-%% evaluation completion
-
-err=0;
-for i=2:trainingSampleCounts-1
-    completion = squeeze(trainingUs(i,:,:))*B*squeeze(trainingUs(i,:,:))';
-    tmp = abs(squeeze(trainingGs(i,:,:))-completion)./squeeze(trainingGs(i,:,:));
-    tmp(find(squeeze(trainingGs(i,:,:))==0))=0;
-    
-    speed_completion = 0;
-    speed_base = 0;
-
-
-    for j=2:n
-        speed_completion = [speed_completion completion(j,j-1)];
-        speed_base = [speed_base trainingGs(i,j,j-1)];
-    end
-
-%     plot(speed_completion)
-%     title(['补全' num2str(i)]);
-%     figure;
-% 
-%     plot(speed_base);
-%     title(['实际值' num2str(i)]);
-%     figure;
-
-    err = err + sum(sum(tmp));
+for i=startFileNum:trainingCount-trainingCount-1
     
 end
-completion_err = err/((trainingSampleCounts-2)*sum(sum(D)))
+%% init data
 
-%% prediction 
-prediction = squeeze(trainingUs(splitFlag-1,:,:))*A*B*(squeeze(trainingUs(splitFlag-1,:,:))*A)';
-average = squeeze(mean(trainingGs));
+for i=1:trainingCount
+    currFileNum = startFileNum+i*interval;
+    if(rem(currFileNum,100)>55)
+        continue; % 文件名为非连续；日和月也需要修改
+    end
+    [trainingGs(i,:,:),trainingYs(i,:,:)] = preProcess(currFileNum);
+end
+% 此处只将下一个时间片作为测试案例
+[testingGs(1,:,:),testingYs(1,:,:)]=preProcess(currFileNum);
+process(trainingGs,trainingYs,testingGs,testingYs);
 
-speed_prediction =[];
-speed_base =[];
-speed_average=[];
-for j=2:n
-    speed_prediction = [speed_prediction prediction(j,j-1)];
-    speed_base = [speed_base testingGs(1,j,j-1)];
-    speed_average=[speed_average average(j,j-1)];
+%% Flow：流的形式进行更新训练集和测试集
+
+for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案例
+    if(rem(i,100)>55)
+        continue; % 文件名为非连续
+    end
+    trainingGs = trainingGs(2:end,:,:);
+    trainingYs = trainingYs(2:end,:,:);
+    [trainingGs(trainingCount,:,:),trainingYs(trainingCount,:,:)] = preProcess(i);
+    [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(i);
+    process(trainingGs,trainingYs,testingGs,testingYs)
 end
 
-plot(speed_completion)
-hold on;
-plot(speed_base,'g');
-hold on;
-plot(speed_average,'r')
-legend('预测值','实际值','平均值');
-
-tmp = abs(squeeze(testingGs(1,:,:))-prediction)./squeeze(testingGs(1,:,:));
-tmp(find(squeeze(testingGs(1,:,:))==0))=0;
-
-prediction_err = sum(sum(tmp))/(sum(sum(D)))
 
 
-tmp = abs(squeeze(testingGs(1,:,:))-average)./squeeze(testingGs(1,:,:));
-tmp(find(squeeze(testingGs(1,:,:))==0))=0;
-
-average_err = sum(sum(tmp))/(sum(sum(D)))
-%% visualization
-
-% speed_completion = 0;
-% speed_base = 0;
-% for i=2:n
-%     speed_completion = [speed_completion completion(i,i-1)];
-%     speed_base = [speed_base Gs(4,i,i-1)];
-% end
-% plot(speed_completion);
-% figure;
-% plot(speed_base,'r')
-% figure;
-% plot(values);
 
 
