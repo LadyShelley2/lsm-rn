@@ -29,7 +29,7 @@ end
 [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(currFileNum);
 [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs);
 errs_prediction_mase=[errs_prediction_mase,err_prediction_mase];
-errs_average_mase=[errs_average_mase,err_average_mase];
+errs_average_mase=[errs_average_mase,]
 %% Flow：流的形式进行更新训练集和测试集
 
 for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案例
@@ -40,17 +40,10 @@ for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案
     trainingYs = trainingYs(2:end,:,:);
     [trainingGs(trainingCount,:,:),trainingYs(trainingCount,:,:)] = preProcess(i);
     [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(i);
-    [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs);
-    errs_prediction_mase=[errs_prediction_mase,err_prediction_mase];
-    errs_average_mase=[errs_average_mase,err_average_mase];
+    process(trainingGs,trainingYs,testingGs,testingYs)
 end
 
-%% 可视化
-figure;
-plot(errs_prediction_mase,'b');
-hold on;
-plot(errs_average_mase,'r');
-legend('lsm-rn错误率','平均值错误率')
+
 
 
 
