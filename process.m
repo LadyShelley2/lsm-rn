@@ -5,7 +5,7 @@
 % testingYs: 测试数据对应指示矩阵
 function [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs)
 %% const params
-k=30;
+k=5;
 iter =50;
 threshold = 1;
 lambda = 4;
@@ -20,6 +20,7 @@ threshold = 0.01;
 W=zeros(n,n);
 for i=2:n
     W(i-1,i)=1;
+    W(i,i-1)=1;
 end
 D=zeros(n,n);
 for i=1:n

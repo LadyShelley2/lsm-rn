@@ -11,5 +11,5 @@ for i=1:iter
     preGoalValue=goalvalue;
     [trainingUs,B,A]=globalLearning(trainingYs,trainingGs,trainingUs,B,W,D,A,lambda,gamma);
 end
-% plot(values);
+plot(values);
 end

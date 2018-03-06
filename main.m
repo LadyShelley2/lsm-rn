@@ -2,10 +2,10 @@ clc;clear;close all;
 %%
 % 本程序先考虑一天的数据，如果考虑多天，读入文件部分需要再修改
 %% 
-startFileNum = 201610010010;
-endFileNum = 201610010835;
+startFileNum = 201709100910;
+endFileNum = 201709101045;
 interval = 5;
-trainingCount = 25;
+trainingCount = 5;
 testingCount = 1;
 
 trainingGs = [];

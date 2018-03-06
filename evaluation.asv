@@ -3,11 +3,7 @@ function [err_prediction_mase,err_average_mase]=evaluation(prediction,base,avera
 
 %% mape
 err_prediction_mase = mape(prediction,base);
-err_average_mase = mape(prediction,base);
-
-%% mae
-err_prediction_mae=mae(prediction,base);
-err_average_mae = mae(prediction,base);
+err_average_mase = mape(predictio)
 
 % average
 err_average_matrix = abs(average-base)./base;
@@ -25,7 +21,6 @@ for i=1:n-1;
     base_element =[base_element,base(i+1,i)];
     average_element =[average_element,average(i+1,i)];
 end
-
 % figure;
 % plot(prediction_element);
 % hold on;
