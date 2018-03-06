@@ -37,7 +37,7 @@ end
 
 %% training
 [trainingUs,B,A]=training(trainingYs,trainingGs,trainingUs,B,L,W,D,A,lambda,gamma,iter);
-predictionG = testing(squeeze(trainingUs(trainingCount,:,:)),B,A,1);
+predictionG = predicting(squeeze(trainingUs(trainingCount,:,:)),B,A,1);
 [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
     err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=evaluation(predictionG,squeeze(testingGs(1,:,:)),squeeze(mean(trainingGs)));
 end

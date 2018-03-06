@@ -13,6 +13,7 @@ testingGs = [];
 % splitFlag = 5; % 分割训练数据和测试数据
 % trainingSampleCounts = splitFlag;
 
+% 用于收集各项指标的数组
 errs_prediction_mape=[];
 errs_average_mape=[];
 errs_prediction_mae=[];
@@ -38,6 +39,7 @@ errs_prediction_mape=[errs_prediction_mape,err_prediction_mape];
 errs_average_mape=[errs_average_mape,err_average_mape];
 
 %% Flow：流的形式进行更新训练集和测试集
+
 for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案例，如果测试多步，则需要更改
     if(rem(i,100)>55)
         continue; % 文件名为非连续
@@ -48,10 +50,11 @@ for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案
     [trainingGs(trainingCount,:,:),trainingYs(trainingCount,:,:)] = preProcess(i);
     [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(i);
     
+    %% 收集各项指标
+    
     [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
     err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs);
     
-    %% 收集各项指标
     errs_prediction_mape=[errs_prediction_mape,err_prediction_mape];
     errs_average_mape=[errs_average_mape,err_average_mape];
     
