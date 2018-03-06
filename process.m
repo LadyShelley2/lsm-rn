@@ -3,7 +3,8 @@
 % trainingYs：输入训练数据快照对应指示矩阵
 % testingGs: 输入测试数据快照
 % testingYs: 测试数据对应指示矩阵
-function [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs)
+function [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
+    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs)
 %% const params
 k=5;
 iter =50;
@@ -37,7 +38,8 @@ end
 %% training
 [trainingUs,B,A]=training(trainingYs,trainingGs,trainingUs,B,L,W,D,A,lambda,gamma,iter);
 predictionG = testing(squeeze(trainingUs(trainingCount,:,:)),B,A,1);
-[err_prediction_mase,err_average_mase]=evaluation(predictionG,squeeze(testingGs(1,:,:)),squeeze(mean(trainingGs)));
+[err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
+    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=evaluation(predictionG,squeeze(testingGs(1,:,:)),squeeze(mean(trainingGs)));
 end
 
 

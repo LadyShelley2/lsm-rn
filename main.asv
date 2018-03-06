@@ -2,8 +2,8 @@ clc;clear;close all;
 %%
 % 本程序先考虑一天的数据，如果考虑多天，读入文件部分需要再修改
 %% 
-startFileNum = 20170910110;
-endFileNum = 201709101335;
+startFileNum = 201709100910;
+endFileNum = 201709101045;
 interval = 5;
 trainingCount = 5;
 testingCount = 1;
@@ -15,6 +15,12 @@ testingGs = [];
 
 errs_prediction_mase=[];
 errs_average_mase=[];
+errs_prediction_mae=[];
+errs_average_mae=[];
+errs_prediction_rmse=[];
+errs_average_rmse=[];
+errs_prediction_nmae=[];
+errs_average_nmae=[];
 
 %% init data
 
@@ -30,8 +36,8 @@ end
 [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs);
 errs_prediction_mase=[errs_prediction_mase,err_prediction_mase];
 errs_average_mase=[errs_average_mase,err_average_mase];
-%% Flow：流的形式进行更新训练集和测试集
 
+%% Flow：流的形式进行更新训练集和测试集
 for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案例
     if(rem(i,100)>55)
         continue; % 文件名为非连续
@@ -40,9 +46,17 @@ for i=currFileNum:interval:endFileNum-1*interval % 此处减去1是为了留出一个测试案
     trainingYs = trainingYs(2:end,:,:);
     [trainingGs(trainingCount,:,:),trainingYs(trainingCount,:,:)] = preProcess(i);
     [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(i);
-    [err_prediction_mase,err_average_mase]=process(trainingGs,trainingYs,testingGs,testingYs);
-    errs_prediction_mase=[errs_prediction_mase,err_prediction_mase];
+    [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
+    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs);
+    
+errs_prediction_mase=[errs_prediction_mase,err_prediction_mase];
     errs_average_mase=[errs_average_mase,err_average_mase];
+    errs_prediction_mae=[errs_prediction_mae,err_prediction_mae];
+    errs_average_mae=[errs_average_mae,err_average_mae];
+    errs_prediction_rmse=[errs_prediction_rmse,err_prediction_rmse];
+    errs_average_rmse=[errs_average_rmse,err_average_rmse];
+    errs_prediction_nmae=[errs_prediction_nmae,err_prediction_nmae];
+    errs_average_nmae=[errs_average_nmae,err_average_nmae];
 end
 
 %% 可视化
