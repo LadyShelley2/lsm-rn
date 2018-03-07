@@ -2,10 +2,10 @@ clc;clear;close all;
 %%
 % 本程序先考虑一天的数据，如果考虑多天，读入文件部分需要再修改
 %% 
-startFileNum = 201709100910;
-endFileNum = 201709101045;
+startFileNum = 201709100810;
+endFileNum = 201709100915;
 interval = 5;
-trainingCount = 12;
+trainingCount = 6;
 testingCount = 1;
 
 trainingGs = [];
@@ -55,8 +55,7 @@ errs_average_nmae=[errs_average_nmae,err_average_nmae];
 
 %% Flow：流的形式进行更新训练集和测试集
 
-while currFileNum<endFileNum % 留出一个测试案例，如果测试多步，则需要更改
-    
+while currFileNum<endFileNum % 留出一个测试案例，如果测试多步，则需要更改    
     % 将训练数据整体向前移动一位，并将新的一行添加至尾部
     trainingGs = trainingGs(2:end,:,:);
     trainingYs = trainingYs(2:end,:,:);
@@ -65,8 +64,7 @@ while currFileNum<endFileNum % 留出一个测试案例，如果测试多步，则需要更改
     [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(nextFileNum(currFileNum,interval)); %当前测试数据的坐标
     currFileNum=nextFileNum(currFileNum,interval);
     
-    %% 收集各项指标
-    
+    %% 收集各项指标    
     [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
     err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs);
     
