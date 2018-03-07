@@ -7,7 +7,7 @@ function [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_ma
     err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs)
 %% const params
 k=5;
-iter =50;
+iter =200;
 threshold = 1;
 lambda = 4;
 gamma = 1;
