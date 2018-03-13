@@ -25,6 +25,13 @@ for i=1:trainingCount
     currFileNum = nextFileNum(currFileNum,interval);
 end
 
+n = size(trainingGs,2);
+W=zeros(n,n);
+for i=2:n
+    W(i-1,i)=1;
+    W(i,i-1)=1;
+end
+
 % 此处只将下一个时间片作为测试案例
 [testingGs(1,:,:),testingYs(1,:,:)]=preProcess(currFileNum); %当前currFileNum 刚好是训练数据的下一个。
 testingLabels = [testingLabels,currFileNum];
@@ -43,7 +50,7 @@ errs_average_nmae=[];
 
 % 获得各项指标
 [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
-err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs);
+err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs,W);
 
 errs_prediction_mape=[errs_prediction_mape,err_prediction_mape];
 errs_average_mape=[errs_average_mape,err_average_mape];
@@ -71,7 +78,7 @@ while currFileNum<endFileNum % 留出一个测试案例，如果测试多步，则需要更改
     
     %% 收集各项指标    
     [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
-    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs);
+    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs,W);
     
     errs_prediction_mape=[errs_prediction_mape,err_prediction_mape];
     errs_average_mape=[errs_average_mape,err_average_mape];
