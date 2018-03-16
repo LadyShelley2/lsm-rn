@@ -21,6 +21,6 @@ end
 % figure;
 % 绘制误差变化图绘图部分
 
-plot(values,'-b*');
+plot(values(3:end),'-b*');
 title('目标值收敛图');
 end

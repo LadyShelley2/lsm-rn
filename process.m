@@ -10,9 +10,8 @@ function [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_ma
 k=5;
 iter =50;
 threshold = 1;
-lambda = 10;
+lambda = 1;
 gamma = 1;
-threshold = 0.01;
 
 %% user params
 [trainingCount,n,n]=size(trainingGs);

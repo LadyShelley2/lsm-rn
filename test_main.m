@@ -15,6 +15,8 @@ function test_main
         G=load([baseUrl num2str(i) '.txt']);
         Y = zeros(size(G));
         Y(find(G>0))=1;
+        % 随机生成波动
+        G=G+normrnd(0,10,[6,6]).*Y;
         trainingGs(i,:,:)=G;
         trainingYs(i,:,:)=Y;
     end
