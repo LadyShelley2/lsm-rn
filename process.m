@@ -3,15 +3,12 @@
 % trainingYs：输入训练数据快照对应指示矩阵
 % testingGs: 输入测试数据快照
 % testingYs: 测试数据对应指示矩阵
-function [err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
-    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs,W)
+function errs=process(trainingGs,trainingYs,testingGs,testingYs,W,varargin)
 
-%% const params
-k=5;
-iter =50;
-threshold = 1;
-lambda = 1;
-gamma = 1;
+
+[k,iter,lambda,gamma] = parse_opt(varargin, 'k', 20, 'iter', 50, ...
+                                              'lambda',1,'gamma',1);
+
 
 %% user params
 [trainingCount,n,n]=size(trainingGs);
@@ -34,12 +31,12 @@ end
 %% training
 [trainingUs,B,A]=training(trainingYs,trainingGs,trainingUs,B,L,W,D,A,lambda,gamma,iter);
 predictionG = predicting(squeeze(trainingUs(trainingCount,:,:)),B,A,1);
+
 % 测试权重叠加前几步预测结果
 % predictionG1 = predicting(squeeze(trainingUs(trainingCount-1,:,:)),B,A,2);
 % predictionG2 = predicting(squeeze(trainingUs(trainingCount-2,:,:)),B,A,3);
 
-[err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
-    err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=evaluation(predictionG,squeeze(testingGs(1,:,:)),squeeze(mean(trainingGs)));
+errs=evaluation(predictionG,squeeze(testingGs(1,:,:)),squeeze(mean(trainingGs)));
 end
 
 

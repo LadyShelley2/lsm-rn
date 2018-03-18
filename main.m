@@ -8,12 +8,10 @@ endFileNum = 201709100850;
 interval = 5;
 trainingCount = 24;
 testingCount = 1;
+path = 'D:\data\test_20170910_sample\';
 
 trainingGs = [];
 testingGs = [];
-repeatIndex =0;
-
-while repeatIndex<repeatCount
 %% init data
 testingLabels = [];
 currFileNum = startFileNum;
@@ -21,7 +19,7 @@ for i=1:trainingCount
     if(rem(currFileNum,100)>55)
         continue; % 文件名为非连续；日和月也需要修改
     end
-    [trainingGs(i,:,:),trainingYs(i,:,:)] = preProcess(currFileNum);
+    [trainingGs(i,:,:),trainingYs(i,:,:)] = preProcess(currFileNum,path);
     currFileNum = nextFileNum(currFileNum,interval);
 end
 
@@ -33,37 +31,11 @@ for i=2:n
 end
 
 % 此处只将下一个时间片作为测试案例
-[testingGs(1,:,:),testingYs(1,:,:)]=preProcess(currFileNum); %当前currFileNum 刚好是训练数据的下一个。
+[testingGs(1,:,:),testingYs(1,:,:)]=preProcess(currFileNum,path); %当前currFileNum 刚好是训练数据的下一个。
 testingLabels = [testingLabels,currFileNum];
 
-% 用于收集各项指标的数组
-errs_prediction_mape=[];
-errs_average_mape=[];
-
-errs_prediction_mae=[];
-errs_average_mae=[];
-
-errs_prediction_rmse=[];
-errs_average_rmse=[];
-
-errs_prediction_nmae=[];
-errs_average_nmae=[];
-
 % 获得各项指标
-[err_prediction_mape,err_average_mape,err_prediction_mae,err_average_mae,...
-err_prediction_rmse,err_average_rmse,err_prediction_nmae,err_average_nmae]=process(trainingGs,trainingYs,testingGs,testingYs,W);
-
-errs_prediction_mape=[errs_prediction_mape,err_prediction_mape];
-errs_average_mape=[errs_average_mape,err_average_mape];
-
-errs_prediction_mae=[errs_prediction_mae,err_prediction_mae];
-errs_average_mae=[errs_average_mae,err_average_mae];
-
-errs_prediction_rmse=[errs_prediction_rmse,err_prediction_rmse];
-errs_average_rmse=[errs_average_rmse,err_average_rmse];
-
-errs_prediction_nmae=[errs_prediction_nmae,err_prediction_nmae];
-errs_average_nmae=[errs_average_nmae,err_average_nmae];
+errs=nmf_alg(trainingGs,trainingYs,testingGs,testingYs,W);
 
 %% Flow：流的形式进行更新训练集和测试集
 
@@ -93,12 +65,6 @@ errs_average_nmae=[errs_average_nmae,err_average_nmae];
 %     errs_prediction_nmae=[errs_prediction_nmae,err_prediction_nmae];
 %     errs_average_nmae=[errs_average_nmae,err_average_nmae];
 % end
-
-save(['errs' num2str(startFileNum) '_' num2str(endFileNum) '_' num2str(repeatIndex) '.mat'],'errs_prediction_mape','errs_average_mape','errs_prediction_mae','errs_average_mae',...
-    'errs_prediction_rmse','errs_average_rmse','errs_prediction_nmae','errs_average_nmae');
-
-repeatIndex = repeatIndex+1;
-end
 
 %% 可视化
 % figure;
