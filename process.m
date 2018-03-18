@@ -6,9 +6,10 @@
 function errs=process(trainingGs,trainingYs,testingGs,testingYs,W,varargin)
 
 
-[k,iter,lambda,gamma] = parse_opt(varargin, 'k', 20, 'iter', 50, ...
-                                              'lambda',1,'gamma',1);
+[k,iter,lambda,gamma,seed] = parse_opt(varargin, 'k', 20, 'iter', 50, ...
+                                              'lambda',1,'gamma',1,'seed',1);
 
+rng(seed); %固定随机数种子
 
 %% user params
 [trainingCount,n,n]=size(trainingGs);
