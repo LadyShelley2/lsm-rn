@@ -1,5 +1,5 @@
-function [trainingGs,trainingYs,testingGs,testingYs,W]=init_data(startFileNum,ntrain,varargin)
-[ntest,interval,path] = parse_opt(varargin, 'ntest',1, ...
+function [trainingGs,trainingYs,testingGs,testingYs,W]=init_data(startFileNum,varargin)
+[ntrain,ntest,interval,path] = parse_opt(varargin,'ntrain',12, 'ntest',1, ...
                                               'interval', 5,'path','D:\data\test_20170910_sample\');
                                           
 trainingGs = [];

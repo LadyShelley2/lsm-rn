@@ -4,29 +4,52 @@ clc;clear;close all;
 %% 
 repeatCount = 10; % 实验重复做的次数
 startFileNum = 201709100620;
-endFileNum = 201709100850;
-interval = 5;
-ntrain = 24;
-ntest = 1;
-path = 'D:\data\test_20170910_sample\';
+endFileNum = 201709100850; %按照流的方式读取时可以用到
 
 % 初始化数据
-[trainingGs,trainingYs,testingGs,testingYs,W]=init_data(startFileNum,ntrain);
+% [trainingGs,trainingYs,testingGs,testingYs,W]=init_data(startFileNum,ntrain);
 
+ntrains=[12];
+for i=1:length(ntrains)
+    tic
+    [trainingGs,trainingYs,testingGs,testingYs,W]=init_data(startFileNum,'ntrain',ntrains(i),'path','D:\data\test_20170910_smooth\');
+    errs_ntrain(i,:)=process(trainingGs,trainingYs,testingGs,testingYs,W);
+    toc;
+end
+errs_ntrain
 
 % 获得效果最好的情况下的随机数seed
 index=nmf_seed(trainingGs,trainingYs,testingGs,testingYs,W);
 
 lambdas=[0.5,2,4,8];
-figure;
-errs_arr=[];
+errs_lambda=[];
 for i=1:length(lambdas)
     tic;
-    errs_arr(i,:)=process(trainingGs,trainingYs,testingGs,testingYs,W,'lambda',lambdas(i),'seed',index);
+    errs_lambda(i,:)=process(trainingGs,trainingYs,testingGs,testingYs,W,'lambda',lambdas(i),'seed',index);
     toc;
 end
 
-errs_arr
+errs_lambda
+
+gammas=[0.5,2,4,8];
+errs_gamma=[];
+for i=1:length(gammas)
+    tic;
+    errs_gamma(i,:)=process(trainingGs,trainingYs,testingGs,testingYs,W,'gamma',gammas(i),'seed',index);
+    toc;
+end
+
+ks=[5,10,15,20];
+errs_k=[];
+for i=1:length(gammas)
+    tic;
+    errs_k(i,:)=process(trainingGs,trainingYs,testingGs,testingYs,W,'k',ks(i),'seed',index);
+    toc;
+end
+errs_k
+
+
+
 %% Flow：流的形式进行更新训练集和测试集
 
 % while currFileNum<endFileNum % 留出一个测试案例，如果测试多步，则需要更改    

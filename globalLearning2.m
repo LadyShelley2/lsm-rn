@@ -29,7 +29,7 @@ function [NewUs,NewB,NewA]=globalLearning2(Ys,Gs,Us,B,W,D,A,lambda,gamma)
     numer = zeros(k,k);
     denom = zeros(k,k);
     
-    for i=1:k
+    for i=1:T
         U = squeeze(Us(i,:,:));
         Y = squeeze(Ys(i,:,:));
         G = squeeze(Gs(i,:,:));
